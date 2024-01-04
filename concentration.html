@@ -50,6 +50,9 @@
   const colors = ['red','orange','yellow','green','white','pink'];
   let colorCopy = colors.concat(colors); // 컬러를 똑같이 6개 더 넣어서 12개로 (짝맞추기용)
   let shuffled = [];
+  let clicked = []; // 카드 비교를 위한 보관소 - 클릭한 카드 2개가 들어오면 비교한뒤 처리값을 반환하는 함수가 참조예정
+  let completed = [];
+  let clickable = false;
 
   function shuffle() { // 피셔 에이츠 셔플
     for(let i=0; colorCopy.length > 0; i++) {
@@ -74,11 +77,44 @@
     return card;
   }
 
+  function onClickCard() {
+    if (!clickable || completed.includes(this) || clicked[0] === this) {
+      return;
+    }
+    this.classList.toggle('flipped');
+    clicked.push(this);
+    if (clicked.length !== 2) {
+      return;
+    }
+    const firstClickedColor = clicked[0].querySelector('.card-back').style.backgroundColor;
+    const secondClickedColor = clicked[1].querySelector('.card-back').style.backgroundColor;
+    if (firstClickedColor === secondClickedColor) {
+      console.log(this);
+      this.removeEventListener('click', onClickCard);
+      completed.push(clicked[0]);
+      completed.push(clicked[1]);
+      clicked = [];
+      if (completed.length !== 12) {
+        return;
+      }
+      alert('축하합니다! 모든 짝을 맞췄습니다!');
+      return;
+    }
+    if (firstClickedColor !== secondClickedColor) {
+      setTimeout(() =>  {
+        clicked[0].classList.remove('flipped');
+        clicked[1].classList.remove('flipped');
+        clicked = [];
+      }, 900)
+    }
+  }
 
   function startGame() {
+    clickable = false;
     shuffle();
     for (let i = 0; i < 12; i++) {
       const card = createCard(i);
+      card.addEventListener('click', onClickCard)
       $wrapper.appendChild(card);
     }
     document.querySelectorAll('.card').forEach((card, index) => {
@@ -89,6 +125,7 @@
     document.querySelectorAll('.card').forEach((card, index) => {
       setTimeout(() => {
         card.classList.remove('flipped')
+        clickable = true;
       }, 5000)
     })
   }
