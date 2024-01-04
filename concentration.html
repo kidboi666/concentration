@@ -101,10 +101,12 @@
       return;
     }
     if (firstClickedColor !== secondClickedColor) {
+      clickable = false;
       setTimeout(() =>  {
         clicked[0].classList.remove('flipped');
         clicked[1].classList.remove('flipped');
         clicked = [];
+        clickable = true;
       }, 900)
     }
   }
