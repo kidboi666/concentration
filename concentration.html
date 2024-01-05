@@ -53,6 +53,8 @@
   let clicked = []; // 카드 비교를 위한 보관소 - 클릭한 카드 2개가 들어오면 비교한뒤 처리값을 반환하는 함수가 참조예정
   let completed = [];
   let clickable = false;
+  let startTime;
+  let endTime;
 
   function shuffle() { // 피셔 에이츠 셔플
     for(let i=0; colorCopy.length > 0; i++) {
@@ -98,6 +100,9 @@
         return;
       }
       alert('축하합니다! 모든 짝을 맞췄습니다!');
+      endTime = new Date;
+      const time = endTime - startTime
+      console.log(`${time}ms`)
       return;
     }
     if (firstClickedColor !== secondClickedColor) {
@@ -128,6 +133,7 @@
       setTimeout(() => {
         card.classList.remove('flipped')
         clickable = true;
+        startTime = new Date;
       }, 5000)
     })
   }
